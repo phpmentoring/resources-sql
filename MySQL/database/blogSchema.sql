@@ -1,0 +1,54 @@
+SET SESSION storage_engine = "InnoDB";
+
+DROP DATABASE IF EXISTS demo_blog;
+CREATE DATABASE demo_blog;
+
+USE demo_blog;
+ALTER DATABASE demo_blog CHARACTER SET "utf8";
+
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES, CREATE TEMPORARY TABLES ON `demo_blog`.* TO 'Tester'@'localhost' IDENTIFIED BY 'queries';
+
+DROP TABLE IF EXISTS post;
+CREATE TABLE post (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    author_id INT NOT NULL REFERENCES author(id),
+    slug VARCHAR(100) NOT NULL UNIQUE,
+    title VARCHAR(400) NOT NULL,
+    content MEDIUMTEXT NOT NULL,
+    published DATETIME NOT NULL,
+    created DATETIME NOT NULL,
+    updated TIMESTAMP NOT NULL,
+    KEY (published)
+    );
+
+DROP TABLE IF EXISTS author;
+CREATE TABLE author (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100) NOT NULL UNIQUE,
+    name VARCHAR(100) NOT NULL
+);
+
+DROP TABLE IF EXISTS tag;
+CREATE TABLE tag (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL
+);
+
+DROP TABLE IF EXISTS post_tag;
+CREATE TABLE post_tag (
+    post_id INT NOT NULL REFERENCES post(id),
+    tag_id INT NOT NULL REFERENCES tag(id)
+);
+
+DROP TABLE IF EXISTS category;
+CREATE TABLE category (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    parent_id INT,
+    name VARCHAR(100) NOT NULL
+);
+
+DROP TABLE IF EXISTS post_category;
+CREATE TABLE post_category (
+    post_id INT NOT NULL REFERENCES post(id),
+    category_id INT NOT NULL REFERENCES category(id)
+);
